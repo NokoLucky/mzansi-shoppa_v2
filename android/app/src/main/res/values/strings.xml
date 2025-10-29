@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Mzansi Shoppa</string>
+    <string name="title_activity_main">Mzansi Shoppa</string>
+    <string name="package_name">com.mzansishoppa.app</string>
+    <string name="custom_url_scheme">com.mzansishoppa.app</string>
+</resources>
