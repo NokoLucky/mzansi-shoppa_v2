@@ -1,4 +1,3 @@
-
 'use client';
 
 import { usePathname } from 'next/navigation';
@@ -12,7 +11,10 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <>
-      <div className={showNav ? "pb-16 md:pb-0" : ""}>
+      {/* Safe area for iOS status bar - applies to all pages */}
+      <div className="safe-area-top" />
+      
+      <div className={showNav ? "pb-16 md:pb-0 pt-safe-top" : "pt-safe-top"}>
         {children}
       </div>
       {showNav && <BottomNav />}

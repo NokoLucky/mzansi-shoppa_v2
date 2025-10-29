@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
@@ -19,7 +18,6 @@ import {
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { getFirebaseInstances } from '@/lib/firebase';
 import { Capacitor } from '@capacitor/core';
-
 
 interface FirebaseServices {
   app: FirebaseApp;
@@ -52,16 +50,22 @@ const updateUserDocument = async (db: Firestore, user: User) => {
       createdAt: new Date().toISOString(),
       savedLists: []
     }, { merge: true });
+  } else {
+    // Update existing user document if needed
+    await setDoc(userDocRef, {
+      email: user.email,
+      displayName: user.displayName,
+      photoURL: user.photoURL,
+      lastLoginAt: new Date().toISOString(),
+    }, { merge: true });
   }
 };
-
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [services, setServices] = useState<FirebaseServices | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isGoogleAuthInitialized, setIsGoogleAuthInitialized] = useState(false);
-
 
   useEffect(() => {
     // Initialize Firebase on the client side
@@ -83,7 +87,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                     setIsGoogleAuthInitialized(true);
                 }
                 
-                const unsubscribe = onAuthStateChanged(instances.auth, (user) => {
+                const unsubscribe = onAuthStateChanged(instances.auth, async (user) => {
+                    if (user) {
+                        // Ensure user document exists when auth state changes
+                        try {
+                            await updateUserDocument(instances.db, user);
+                        } catch (error) {
+                            console.error("Error updating user document on auth state change:", error);
+                        }
+                    }
                     setUser(user);
                     setLoading(false);
                 });
@@ -114,7 +126,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signIn = async (email: string, pass: string) => {
     if (!services) throw new Error("Firebase not initialized");
-    await signInWithEmailAndPassword(services.auth, email, pass);
+    const { auth, db } = services;
+    
+    const userCredential = await signInWithEmailAndPassword(auth, email, pass);
+    const firebaseUser = userCredential.user;
+    
+    // Ensure user document exists after sign in
+    await updateUserDocument(db, firebaseUser);
+    
+    // Update local state
+    setUser(firebaseUser);
   };
 
   const sendPasswordReset = async (email: string) => {
@@ -134,11 +155,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             const credential = GoogleAuthProvider.credential(googleUser.authentication.idToken);
             const userCredential = await signInWithCredential(auth, credential);
             await updateUserDocument(db, userCredential.user);
+            setUser(userCredential.user);
         } else {
             // Fallback to web-based popup
             const provider = new GoogleAuthProvider();
             const result = await signInWithPopup(auth, provider);
             await updateUserDocument(db, result.user);
+            setUser(result.user);
         }
     } catch (error: any) {
         if (error.code === 'auth/popup-closed-by-user' || error.message.includes('popup-closed-by-user')) {
@@ -149,7 +172,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         throw error;
     }
   };
-
 
   const signOut = async () => {
     if (!services) throw new Error("Firebase not initialized");
@@ -165,6 +187,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
     
     await firebaseSignOut(services.auth);
+    setUser(null);
   };
 
   const value = {
