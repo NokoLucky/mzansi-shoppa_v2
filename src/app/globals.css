@@ -38,6 +38,7 @@
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
+
   .dark {
     --background: 20 14.3% 4.1%;
     --foreground: 60 9.1% 97.8%;
@@ -72,21 +73,34 @@
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
-}
 
-@layer base {
+  /* Apply Tailwind base border + theme colors */
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
+    /* ✅ Safe area support for iOS notch/status bar */
+    padding-top: env(safe-area-inset-top);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
-  .has-notch body {
-      padding-top: env(safe-area-inset-top);
+  /* Optional utilities for layout components */
+  .safe-area-top {
+    height: env(safe-area-inset-top);
+  }
+  .pt-safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  .pb-safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
   }
 }
 
+/* Animated gradient title (unchanged) */
 @keyframes animationgradienttitle {
   0% {
     background-position: 0% 50%;
