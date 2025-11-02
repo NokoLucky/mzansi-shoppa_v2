@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import MainLayout from '@/components/main-layout';
 import { ThemeProvider } from '@/components/theme-provider';
 import { AuthProvider } from '@/context/auth-context';
+import StatusBarSetup from '@/components/status-bar-setup'; // 👈 add this
 
 export const metadata: Metadata = {
   title: 'Mzansi Shoppa',
@@ -24,6 +25,8 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
       </head>
       <body className="font-body antialiased">
+        <StatusBarSetup /> {/* 👈 Added here */}
+
         <AuthProvider>
           <ThemeProvider
             attribute="class"
