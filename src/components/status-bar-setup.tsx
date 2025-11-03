@@ -3,25 +3,29 @@
 import { useEffect } from 'react';
 import { StatusBar, Style } from '@capacitor/status-bar';
 
-export default function StatusBarSetup() {
+const StatusBarSetup = () => {
   useEffect(() => {
-    const configureStatusBar = async () => {
-      try {
-        // Prevent the webview from drawing under the iOS status bar
-        await StatusBar.setOverlaysWebView({ overlay: false });
-
-        // Set the background color (light mode)
-        await StatusBar.setBackgroundColor({ color: '#ffffff' });
-
-        // Use dark text/icons on the light bar
-        await StatusBar.setStyle({ style: Style.Dark });
-      } catch (err) {
-        console.warn('StatusBar plugin not available:', err);
+    const setupStatusBar = async () => {
+      if (typeof window !== 'undefined' && 'Capacitor' in window) {
+        try {
+          // Set status bar style
+          await StatusBar.setStyle({ style: Style.Dark });
+          
+          // Don't overlay the status bar
+          await StatusBar.setOverlaysWebView({ overlay: false });
+          
+          // Set background color (optional)
+          await StatusBar.setBackgroundColor({ color: '#FFFFFF' });
+        } catch (error) {
+          console.log('StatusBar not available in web context');
+        }
       }
     };
 
-    configureStatusBar();
+    setupStatusBar();
   }, []);
 
-  return null; // no visible UI
-}
+  return null;
+};
+
+export default StatusBarSetup;

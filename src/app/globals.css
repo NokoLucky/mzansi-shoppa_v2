@@ -79,25 +79,54 @@
     @apply border-border;
   }
 
+  /* Fix for iOS status bar */
+  html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  
   body {
     @apply bg-background text-foreground;
-    /* ✅ Safe area support for iOS notch/status bar */
-    padding-top: env(safe-area-inset-top);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    
+    /* Safe area insets with fallbacks */
+    padding-top: constant(safe-area-inset-top); /* iOS 11.0 */
+    padding-top: env(safe-area-inset-top); /* iOS 11.2+ */
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
     padding-bottom: env(safe-area-inset-bottom);
   }
 
-  /* Optional utilities for layout components */
-  .safe-area-top {
-    height: env(safe-area-inset-top);
+  /* Ensure the app container takes full height */
+  #__next {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
   }
-  .pt-safe-top {
-    padding-top: env(safe-area-inset-top);
-  }
-  .pb-safe-bottom {
-    padding-bottom: env(safe-area-inset-bottom);
-  }
+}
+
+/* Safe area utility classes */
+.safe-area-top {
+  height: constant(safe-area-inset-top);
+  height: env(safe-area-inset-top);
+}
+
+.pt-safe-top {
+  padding-top: constant(safe-area-inset-top);
+  padding-top: env(safe-area-inset-top);
+}
+
+.pb-safe-bottom {
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.mt-safe-top {
+  margin-top: constant(safe-area-inset-top);
+  margin-top: env(safe-area-inset-top);
 }
 
 /* Animated gradient title (unchanged) */

@@ -40,7 +40,7 @@ function HomePageContent() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="py-8 px-4 sm:px-8 md:px-16 bg-primary text-primary-foreground shadow-lg">
+      <header className="pt-safe-top py-8 px-4 sm:px-8 md:px-16 bg-primary text-primary-foreground shadow-lg">
         <div className="container mx-auto">
           <h1 className="text-4xl sm:text-5xl font-headline font-bold">Mzansi Shoppa</h1>
           <p className="mt-2 text-lg sm:text-xl font-body text-primary-foreground/90">Your smart shopping companion in South Africa</p>
