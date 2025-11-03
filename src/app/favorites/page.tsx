@@ -56,6 +56,22 @@ function FavoritesSkeleton() {
     )
 }
 
+const formatDateWithOrdinal = (dateString: string) => {
+  const date = new Date(dateString);
+  const day = date.getDate();
+  const month = date.toLocaleDateString('en-GB', { month: 'long' });
+  const year = date.getFullYear();
+  
+  // Add ordinal suffix
+  const getOrdinal = (n: number) => {
+    const s = ["th", "st", "nd", "rd"];
+    const v = n % 100;
+    return n + (s[(v - 20) % 10] || s[v] || s[0]);
+  };
+  
+  return `List from ${getOrdinal(day)} ${month} ${year}`;
+};
+
 export default function FavoritesPage() {
   const [savedLists, setSavedLists] = useState<SavedList[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -329,7 +345,7 @@ export default function FavoritesPage() {
               <Card key={list.date} className="shadow-lg border border-primary/10 flex flex-col">
                 <CardHeader>
                   <CardTitle className="font-headline text-xl">
-                    List from {new Date(list.date).toLocaleDateString()}
+                    {formatDateWithOrdinal(list.date)}
                   </CardTitle>
                   <CardDescription>
                     {new Date(list.date).toLocaleTimeString()} - {list.items.length} items

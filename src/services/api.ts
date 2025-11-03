@@ -42,4 +42,19 @@ export const apiService = {
     });
     return response.json();
   },
+
+  // NEW: Import grocery list from Notes app text
+  async importGroceryList(text: string) {
+    const response = await fetch(`${API_BASE}/import-list`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text }),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Import failed: ${response.status} ${response.statusText}`);
+    }
+    
+    return await response.json();
+  },
 };
